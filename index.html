@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>คู่มือการใช้งานโมดูลค่าใช้จ่ายและค่าใช้จ่ายล่วงหน้า</title>
+    <style>
+        :root {
+            --bg: #f6f7f3;
+            --panel: #ffffff;
+            --panel-soft: #f3f1ea;
+            --text: #1d2a32;
+            --muted: #5f6b72;
+            --line: #d8ddd6;
+            --brand: #1f6f5f;
+            --brand-2: #2d8b78;
+            --accent: #c4682d;
+            --warning: #b36a00;
+            --danger: #b63c33;
+            --info: #155e87;
+            --shadow: 0 18px 40px rgba(25, 43, 38, 0.08);
+            --radius: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top right, rgba(31, 111, 95, 0.08), transparent 26%),
+                linear-gradient(180deg, #fbfbf8 0%, var(--bg) 100%);
+            line-height: 1.7;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 40px));
+            margin: 32px auto 72px;
+        }
+
+        .hero {
+            background:
+                linear-gradient(135deg, rgba(31, 111, 95, 0.96), rgba(23, 56, 72, 0.94)),
+                linear-gradient(180deg, #18463c, #0f2f3f);
+            color: #fff;
+            border-radius: 28px;
+            padding: 36px 40px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: auto -60px -60px auto;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .hero h1 {
+            margin: 0 0 12px;
+            font-size: clamp(30px, 4vw, 46px);
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            margin: 0;
+            max-width: 900px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 290px minmax(0, 1fr);
+            gap: 24px;
+            margin-top: 28px;
+        }
+
+        .toc,
+        .section,
+        .callout,
+        .metric,
+        .card,
+        .rule,
+        .faq-item {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .toc {
+            position: sticky;
+            top: 24px;
+            align-self: start;
+            padding: 24px 22px;
+        }
+
+        .toc h2 {
+            margin: 0 0 14px;
+            font-size: 18px;
+        }
+
+        .toc ol {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--muted);
+        }
+
+        .toc li + li {
+            margin-top: 8px;
+        }
+
+        .toc a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            color: var(--brand);
+        }
+
+        .content {
+            display: grid;
+            gap: 22px;
+        }
+
+        .section {
+            padding: 28px;
+        }
+
+        .section h2 {
+            margin: 0 0 10px;
+            font-size: 28px;
+            line-height: 1.2;
+        }
+
+        .section h3 {
+            margin: 26px 0 10px;
+            font-size: 21px;
+            line-height: 1.3;
+        }
+
+        .section h4 {
+            margin: 22px 0 8px;
+            font-size: 17px;
+        }
+
+        .lead {
+            color: var(--muted);
+            margin: 0 0 20px;
+        }
+
+        .grid-2,
+        .grid-3,
+        .grid-4 {
+            display: grid;
+            gap: 16px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .metric {
+            padding: 18px;
+            background: linear-gradient(180deg, #ffffff 0%, #f9faf7 100%);
+        }
+
+        .metric .label {
+            display: block;
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .metric strong {
+            font-size: 22px;
+            line-height: 1.2;
+        }
+
+        .callout {
+            padding: 18px 20px;
+            border-left: 6px solid var(--brand);
+            background: linear-gradient(180deg, #ffffff 0%, #f7fbf9 100%);
+        }
+
+        .callout.warning {
+            border-left-color: var(--warning);
+            background: linear-gradient(180deg, #fffdfa 0%, #fff6ea 100%);
+        }
+
+        .callout.danger {
+            border-left-color: var(--danger);
+            background: linear-gradient(180deg, #fffdfd 0%, #fff1ef 100%);
+        }
+
+        .callout.info {
+            border-left-color: var(--info);
+            background: linear-gradient(180deg, #fcfeff 0%, #eef8fd 100%);
+        }
+
+        .flow {
+            display: grid;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .flow-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+            gap: 12px;
+        }
+
+        .flow-step {
+            flex: 1 1 160px;
+            min-width: 150px;
+            padding: 16px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #ffffff 0%, #f5f7f3 100%);
+            border: 1px solid var(--line);
+            position: relative;
+        }
+
+        .flow-step .step-title {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .flow-step .step-note {
+            display: block;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .flow-arrow {
+            align-self: center;
+            color: var(--brand-2);
+            font-size: 28px;
+            font-weight: 700;
+            padding: 0 2px;
+        }
+
+        .card {
+            padding: 18px;
+        }
+
+        .card h4,
+        .rule h4,
+        .faq-item h4 {
+            margin-top: 0;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            margin-top: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 760px;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid var(--line);
+            padding: 12px 14px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--muted);
+            background: #f5f6f2;
+        }
+
+        tbody tr:nth-child(even) td {
+            background: #fbfbf8;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            line-height: 1.4;
+            background: #eef5f3;
+            color: var(--brand);
+            border: 1px solid rgba(31, 111, 95, 0.16);
+        }
+
+        .rule-list,
+        .plain-list {
+            margin: 10px 0 0;
+            padding-left: 20px;
+        }
+
+        .rule-list li + li,
+        .plain-list li + li {
+            margin-top: 8px;
+        }
+
+        .rule-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 14px;
+        }
+
+        .rule {
+            padding: 18px;
+            background: linear-gradient(180deg, #ffffff 0%, #fafbf8 100%);
+        }
+
+        .faq {
+            display: grid;
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .faq-item {
+            padding: 18px 20px;
+        }
+
+        code {
+            font-family: Consolas, "Courier New", monospace;
+            background: #f0f3ef;
+            color: #23493f;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.95em;
+        }
+
+        .footer-note {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        @media (max-width: 980px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .toc {
+                position: static;
+            }
+
+            .grid-2,
+            .grid-3,
+            .grid-4,
+            .rule-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page {
+                width: min(100% - 24px, 1180px);
+                margin-top: 16px;
+            }
+
+            .hero,
+            .section,
+            .toc {
+                padding: 22px;
+            }
+        }
+
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            .page {
+                width: 100%;
+                margin: 0;
+            }
+
+            .hero,
+            .toc,
+            .section,
+            .callout,
+            .metric,
+            .card,
+            .rule,
+            .faq-item {
+                box-shadow: none;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header class="hero">
+            <h1>คู่มือการใช้งานโมดูลค่าใช้จ่าย และค่าใช้จ่ายล่วงหน้า</h1>
+            <p>
+                คู่มือนี้สรุปการทำงานของโมดูล <strong>Actual Expense</strong>, <strong>Cash Advance</strong>,
+                <strong>Settlement Workbench</strong>, <strong>Expense Adjustment</strong> และ <strong>Expense Control</strong>
+                จากโค้ดระบบปัจจุบันของ Transport เพื่อใช้เป็นคู่มือทำงาน, คู่มือ onboarding และคู่มืออ้างอิงเรื่องสิทธิ์การใช้งาน
+                และ workflow ภายในระบบ
+            </p>
+            <div class="hero-meta">
+                <span class="pill">อ้างอิงโค้ดระบบ ณ วันอาทิตย์ที่ 19 กรกฎาคม 2026</span>
+                <span class="pill">ขอบเขต: Job Expense, Cash Advance, Settlement, Expense Adjustment</span>
+                <span class="pill">รูปแบบ: Flow + Rule + Role Permission</span>
+            </div>
+        </header>
+
+        <div class="layout">
+            <aside class="toc">
+                <h2>สารบัญ</h2>
+                <ol>
+                    <li><a href="#overview">ภาพรวมโมดูล</a></li>
+                    <li><a href="#roles">บทบาทและสิทธิ์</a></li>
+                    <li><a href="#screens">หน้าจอหลักของระบบ</a></li>
+                    <li><a href="#actual-expense">Actual Expense ที่ระดับ Job</a></li>
+                    <li><a href="#cash-advance">Cash Advance / ค่าใช้จ่ายล่วงหน้า</a></li>
+                    <li><a href="#settlement">Settlement Workbench</a></li>
+                    <li><a href="#expense-adjustment">Expense Adjustment</a></li>
+                    <li><a href="#expense-control">Expense Control และ Bulk Approval</a></li>
+                    <li><a href="#rules">Business Rules สำคัญ</a></li>
+                    <li><a href="#faq">คำถามที่พบบ่อย</a></li>
+                    <li><a href="#appendix">ภาคผนวก: Permission Key / Route</a></li>
+                </ol>
+            </aside>
+
+            <main class="content">
+                <section class="section" id="overview">
+                    <h2>1. ภาพรวมโมดูล</h2>
+                    <p class="lead">
+                        ระบบส่วนนี้ไม่ได้เป็นแค่ “หน้าบันทึกค่าใช้จ่าย” แต่เป็นวงจรครบตั้งแต่บันทึกค่าใช้จ่ายจริง, ขอเบิกเงินล่วงหน้า,
+                        อนุมัติหลายขั้น, โอนเงิน, เคลียร์เงินจริง, และปรับปรุงค่าใช้จ่ายหลังโอน
+                    </p>
+
+                    <div class="grid-4">
+                        <div class="metric">
+                            <span class="label">Module A</span>
+                            <strong>Job Actual Expense</strong>
+                            <div class="footer-note">บันทึกค่าใช้จ่ายจริงของงาน</div>
+                        </div>
+                        <div class="metric">
+                            <span class="label">Module B</span>
+                            <strong>Cash Advance</strong>
+                            <div class="footer-note">ขอเบิกเงินล่วงหน้าแบบ 1 Job หลายรายการ</div>
+                        </div>
+                        <div class="metric">
+                            <span class="label">Module C</span>
+                            <strong>Settlement</strong>
+                            <div class="footer-note">เคลียร์เงินจริงหลังโอนเงินแล้ว</div>
+                        </div>
+                        <div class="metric">
+                            <span class="label">Module D</span>
+                            <strong>Expense Adjustment</strong>
+                            <div class="footer-note">แก้ actual expense หลังฐานรายการถูก lock</div>
+                        </div>
+                    </div>
+
+                    <h3>ภาพใหญ่ของ flow ทั้งระบบ</h3>
+                    <div class="flow">
+                        <div class="flow-row">
+                            <div class="flow-step">
+                                <span class="step-title">1. สร้าง / ดู Job</span>
+                                <span class="step-note">ผู้ใช้บันทึกข้อมูลงานและค่าใช้จ่ายจริงที่เกี่ยวข้อง</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">2. ขอเบิก Cash Advance</span>
+                                <span class="step-note">1 ใบเบิกผูกกับ 1 Job แต่มีได้หลาย request line</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">3. อนุมัติหลายขั้น</span>
+                                <span class="step-note">CS Supervisor → Finance Verify → Final Approval → Accounting</span>
+                            </div>
+                        </div>
+                        <div class="flow-row">
+                            <div class="flow-step">
+                                <span class="step-title">4. โอนเงินจริง</span>
+                                <span class="step-note">บัญชีบันทึกการโอน และแนบหลักฐานการโอน</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">5. Settlement</span>
+                                <span class="step-note">เคลียร์จริงแบบ line-level, กระจายยอด, top-up, return, adjustment</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">6. ปิดรายการ</span>
+                                <span class="step-note">เมื่อส่วนต่างเป็นศูนย์และเอกสารครบ สถานะเปลี่ยนเป็น Settled</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="callout info">
+                        <strong>สรุปแบบสั้นที่สุด:</strong>
+                        ค่าใช้จ่ายจริงใช้สำหรับ “บันทึกสิ่งที่เกิดขึ้นแล้ว”, Cash Advance ใช้สำหรับ “ขอเงินก่อนใช้จริง”,
+                        Settlement ใช้สำหรับ “เคลียร์เงินที่ขอไปให้ตรงกับสิ่งที่เกิดขึ้นจริง”, และ Expense Adjustment ใช้เมื่อ
+                        “ค่าใช้จ่ายจริงตัวเดิมถูก lock แล้วจะแก้ผ่านรายการปรับแทน”
+                    </div>
+                </section>
+
+                <section class="section" id="roles">
+                    <h2>2. บทบาทและสิทธิ์</h2>
+                    <p class="lead">
+                        ในเชิงระบบ สิทธิ์ถูกผูกกับ permission key ไม่ได้ผูกกับตำแหน่งงานชื่อเดียวตายตัว ดังนั้นผู้ใช้หนึ่งคนอาจถือหลายบทบาทได้
+                    </p>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>บทบาทเชิงธุรกิจ</th>
+                                    <th>สิทธิ์หลักที่ใช้</th>
+                                    <th>ทำอะไรได้</th>
+                                    <th>หมายเหตุสำคัญ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ผู้บันทึกงาน / ผู้ขอเบิก</td>
+                                    <td><code>transport.job create/edit</code> + <code>transport.cash_advance create/submit</code></td>
+                                    <td>สร้าง Job, บันทึกค่าใช้จ่ายจริง, สร้างใบเบิกเงินล่วงหน้า</td>
+                                    <td>ถ้าไม่มีสิทธิ์ดูแล Job จะเริ่มสร้าง Cash Advance ไม่ได้</td>
+                                </tr>
+                                <tr>
+                                    <td>ผู้ดูข้อมูล</td>
+                                    <td><code>transport.cash_advance view</code>, <code>transport.expense_adjustment view</code></td>
+                                    <td>ดูรายการ, ดูสถานะ, ดาวน์โหลดเอกสาร</td>
+                                    <td>ดู Settlement ได้เมื่อรายการอยู่สถานะ <span class="badge">Transferred</span> หรือ <span class="badge">Settled</span></td>
+                                </tr>
+                                <tr>
+                                    <td>หัวหน้า CS</td>
+                                    <td><code>cash_advance cs_approve</code> หรือ <code>cash_advance approve</code><br><code>expense_adjustment cs_approve</code> หรือ <code>expense_adjustment approve</code></td>
+                                    <td>อนุมัติขั้นหัวหน้า CS และส่งกลับ Draft</td>
+                                    <td>Cash Advance ใช้สิทธิ์ role เป็นหลัก, Expense Adjustment ยังดู assigned user ด้วย</td>
+                                </tr>
+                                <tr>
+                                    <td>การเงินตรวจสอบ</td>
+                                    <td><code>cash_advance finance_verify</code> หรือ <code>cash_advance approve</code></td>
+                                    <td>ตรวจความพร้อมทางบัญชีของใบเบิกก่อนเข้าขั้นอนุมัติสุดท้าย</td>
+                                    <td>ทุก request line ต้องมี Account Code ก่อนผ่านขั้นนี้</td>
+                                </tr>
+                                <tr>
+                                    <td>ผู้อนุมัติขั้นสุดท้าย</td>
+                                    <td><code>cash_advance final_approve</code> หรือ <code>cash_advance approve</code></td>
+                                    <td>อนุมัติ / ไม่อนุมัติรายบรรทัด, ส่งรายการต่อให้บัญชี</td>
+                                    <td>ระบบบังคับให้มีอย่างน้อย 1 line ที่อนุมัติ</td>
+                                </tr>
+                                <tr>
+                                    <td>บัญชี</td>
+                                    <td><code>cash_advance accounting_approve</code> หรือ <code>cash_advance approve</code></td>
+                                    <td>บันทึกการโอนเงินจริงและแนบ slip</td>
+                                    <td>หลังโอนแล้ว ใบเบิกถูก lock และต้องไปแก้ผ่าน Settlement เท่านั้น</td>
+                                </tr>
+                                <tr>
+                                    <td>ผู้เคลียร์เงิน</td>
+                                    <td><code>cash_advance settle</code> หรือ <code>cash_advance approve</code></td>
+                                    <td>Allocate ค่าใช้จ่ายจริง, บันทึก return / top-up / manual adjustment, ปิด settlement</td>
+                                    <td>แก้ Settlement ได้เฉพาะสถานะ <span class="badge">Transferred</span></td>
+                                </tr>
+                                <tr>
+                                    <td>ผู้จัดการการเงิน (Adjustment)</td>
+                                    <td><code>expense_adjustment final_approve</code> หรือ <code>expense_adjustment approve</code></td>
+                                    <td>อนุมัติ Expense Adjustment ขั้นสุดท้าย</td>
+                                    <td>Expense Adjustment จะดู assigned user ถ้าระบุไว้</td>
+                                </tr>
+                                <tr>
+                                    <td>ผู้ดูแลระบบ</td>
+                                    <td>สิทธิ์ตาม role ภายในระบบ</td>
+                                    <td>ทำงานแทน role ต่าง ๆ ตามสิทธิ์ที่ได้รับ</td>
+                                    <td>สำหรับ Expense Adjustment ถ้า roleId = 1 จะ bypass เงื่อนไข assigned user</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="callout">
+                        <strong>จุดสำคัญมาก:</strong> Cash Advance ในปัจจุบัน “ใช้สิทธิ์ตาม role เป็นหลัก”
+                        แม้ว่าระบบจะเก็บผู้รับผิดชอบรายขั้นไว้เพื่อ routing และแสดงผล แต่ไม่ได้บังคับว่าต้องเป็น user ที่ถูก assign เท่านั้นจึงกดอนุมัติได้
+                    </div>
+
+                    <div class="callout warning">
+                        <strong>ข้อยกเว้น:</strong> Expense Adjustment ยังใช้ตรรกะเข้มกว่า คือถ้าระบุ assigned user ไว้
+                        ผู้ที่จะกดอนุมัติต้องเป็นคนนั้นจริง และผู้ขอรายการเองกดอนุมัติรายการตัวเองไม่ได้
+                    </div>
+                </section>
+
+                <section class="section" id="screens">
+                    <h2>3. หน้าจอหลักของระบบ</h2>
+                    <p class="lead">ถ้าจะสอนผู้ใช้ใหม่ แนะนำให้เริ่มจาก 5 หน้าจอนี้ก่อน</p>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <h4>1. Job View</h4>
+                            <p>ใช้ดูรายละเอียดงาน, บันทึก Actual Expense, เลือกค่าใช้จ่ายที่จะใช้เป็นฐานในการสร้าง Cash Advance และดูว่ารายการใดถูก lock แล้ว</p>
+                            <p><code>/transport/jobs/view/{jobId}</code></p>
+                        </div>
+                        <div class="card">
+                            <h4>2. Cash Advance List</h4>
+                            <p>หน้ารายการใบเบิกทั้งหมด ใช้ค้นหา, กรองสถานะ, ดูคิวงาน และทำ Bulk Approval</p>
+                            <p><code>/transport/cash-advances</code></p>
+                        </div>
+                        <div class="card">
+                            <h4>3. Cash Advance Detail</h4>
+                            <p>ใช้ดูข้อมูลใบเบิก, request line summary, approval log, transfer slip, settlement summary และปุ่ม action รายขั้น</p>
+                            <p><code>/transport/cash-advances/view/{id}</code></p>
+                        </div>
+                        <div class="card">
+                            <h4>4. Settlement Workbench</h4>
+                            <p>ใช้เคลียร์เงินจริงหลังโอนเงินแล้ว โดยทำงานแบบ line-level และแนบเอกสารประกอบ</p>
+                            <p><code>/transport/cash-advances/settlement/{id}</code></p>
+                        </div>
+                        <div class="card">
+                            <h4>5. Expense Adjustment</h4>
+                            <p>ใช้ปรับ actual expense หลังรายการฐานถูก lock จากการมี cash advance ที่โอนแล้ว หรือมี adjustment ค้างอยู่</p>
+                            <p><code>/transport/expense-adjustments</code></p>
+                        </div>
+                        <div class="card">
+                            <h4>6. Expense Control Dashboard</h4>
+                            <p>workspace สำหรับฝ่ายคุมค่าใช้จ่าย ดูยอดวันนี้/สัปดาห์นี้, คิวโอน, คิวเคลียร์, open adjustment และเปิด settlement แบบเร็ว</p>
+                            <p><code>/transport/expense-control</code></p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section" id="actual-expense">
+                    <h2>4. Actual Expense ที่ระดับ Job</h2>
+                    <p class="lead">
+                        Actual Expense คือ “ค่าใช้จ่ายจริงที่เกิดขึ้นกับงาน” และเป็นฐานข้อมูลสำคัญสำหรับทั้ง Cash Advance และ Settlement
+                    </p>
+
+                    <h3>สิ่งที่ทำได้</h3>
+                    <ul class="plain-list">
+                        <li>เพิ่มรายการค่าใช้จ่ายจริงในหน้า Job</li>
+                        <li>แก้ไขรายการเดิม ก่อนที่ระบบจะ lock</li>
+                        <li>ลบรายการ ก่อนที่ระบบจะ lock</li>
+                        <li>ใช้รายการเหล่านี้เป็นรายการอ้างอิงตอนสร้าง Cash Advance</li>
+                    </ul>
+
+                    <h3>เมื่อไรที่ Actual Expense จะถูก lock</h3>
+                    <div class="rule-grid">
+                        <div class="rule">
+                            <h4>กรณีที่ 1: มี Cash Advance โอนแล้วใน Job เดียวกัน</h4>
+                            <p>ถ้างานนี้มี cash advance ที่อยู่หลังขั้นโอนแล้ว ระบบจะไม่ให้แก้ไขฐาน Actual Expense ตรง ๆ</p>
+                        </div>
+                        <div class="rule">
+                            <h4>กรณีที่ 2: มี Expense Adjustment ที่อนุมัติแล้ว</h4>
+                            <p>ถ้ารายการค่าใช้จ่ายนี้เคยถูกปรับผ่าน adjustment และได้รับอนุมัติแล้ว ฐานรายการเดิมจะถูก lock</p>
+                        </div>
+                        <div class="rule">
+                            <h4>กรณีที่ 3: มี Expense Adjustment ค้างอยู่</h4>
+                            <p>ถ้ามี adjustment แบบยังไม่จบ workflow ระบบก็ lock ฐานรายการไว้เช่นกัน เพื่อกันข้อมูลสวนทางกัน</p>
+                        </div>
+                        <div class="rule">
+                            <h4>ผลลัพธ์</h4>
+                            <p>เมื่อ lock แล้ว ต้องแก้ผ่าน <strong>Expense Adjustment</strong> หรือแก้ยอดใน <strong>Settlement</strong> ตามบริบท แทนการแก้รายการฐาน</p>
+                        </div>
+                    </div>
+
+                    <div class="callout danger">
+                        <strong>หลักการใช้งาน:</strong> ถ้าระบบขึ้นว่า Actual Expense ถูก lock หลังโอนเงินหรือมี adjustment ค้างอยู่
+                        อย่าพยายามแก้ฐานรายการเดิม ให้ใช้หน้า Expense Adjustment หรือ Settlement แทน
+                    </div>
+                </section>
+
+                <section class="section" id="cash-advance">
+                    <h2>5. Cash Advance / ค่าใช้จ่ายล่วงหน้า</h2>
+                    <p class="lead">
+                        ปัจจุบันระบบรองรับ <strong>1 ใบเบิก ต่อ 1 Job</strong> แต่ใน 1 ใบเบิกสามารถมี <strong>หลาย request line</strong> ได้
+                        โดย 1 line หมายถึง “1 ประเภทค่าใช้จ่าย” ไม่ใช่ 1 ใบเสร็จ
+                    </p>
+
+                    <h3>โครงสร้างข้อมูลของใบเบิก</h3>
+                    <div class="grid-3">
+                        <div class="card">
+                            <h4>Header</h4>
+                            <p>มีเลขที่ใบเบิก, Job, วันที่ขอ, วันที่ต้องใช้เงิน, ผู้รับเงิน, หมายเหตุ และยอดรวมทั้งใบ</p>
+                        </div>
+                        <div class="card">
+                            <h4>Request Line</h4>
+                            <p>แต่ละบรรทัดมี Cost Type, Account Code, Qty, Unit Price, Total, Description, Reference, Notes</p>
+                        </div>
+                        <div class="card">
+                            <h4>Link กับ Job Expense</h4>
+                            <p>แต่ละ line ผูกกับ job expense ที่อยู่ใน Job เดียวกันได้ เพื่อระบุว่าเบิกเผื่อค่าใช้จ่ายตัวไหน</p>
+                        </div>
+                    </div>
+
+                    <h3>Validation ตอนสร้าง / แก้ไขใบเบิก</h3>
+                    <ul class="rule-list">
+                        <li>ต้องมีอย่างน้อย 1 request line</li>
+                        <li>ทุก line ต้องเลือก Cost Type</li>
+                        <li>Qty ต้องมากกว่า 0</li>
+                        <li>Total Amount ต้องมากกว่า 0</li>
+                        <li>ถ้าเลือก linked job expenses ต้องเลือกได้เฉพาะค่าใช้จ่ายจาก Job เดียวกัน</li>
+                        <li>ระบบจะสรุปยอดรวมจากทุก line เป็นยอดใบเบิก</li>
+                    </ul>
+
+                    <h3>Flow การทำงานของ Cash Advance</h3>
+                    <div class="flow">
+                        <div class="flow-row">
+                            <div class="flow-step">
+                                <span class="step-title">Draft</span>
+                                <span class="step-note">ผู้ขอบันทึกข้อมูลได้เต็มที่ แก้ไขหรือลบได้</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">Pending CS Supervisor</span>
+                                <span class="step-note">รอหัวหน้า CS อนุมัติ หรือส่งกลับ Draft</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">Pending Finance Verify</span>
+                                <span class="step-note">รอการเงินตรวจสอบ Account Code และความพร้อม</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">Pending Final Approval</span>
+                                <span class="step-note">ผู้อนุมัติขั้นสุดท้ายอนุมัติหรือไม่อนุมัติราย line ได้</span>
+                            </div>
+                        </div>
+                        <div class="flow-row">
+                            <div class="flow-step">
+                                <span class="step-title">Pending Accounting</span>
+                                <span class="step-note">บัญชีบันทึกการโอนเงินจริง</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">Transferred</span>
+                                <span class="step-note">เงินถูกโอนแล้ว ใบเบิกถูก lock และไปต่อที่ Settlement</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">Settled</span>
+                                <span class="step-note">เคลียร์เงินจริงและปิดส่วนต่างครบแล้ว</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>ตารางสถานะและ action ของ Cash Advance</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>สถานะ</th>
+                                    <th>ใครทำงานต่อ</th>
+                                    <th>Action หลัก</th>
+                                    <th>หมายเหตุ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge">Draft</span></td>
+                                    <td>ผู้ขอเบิก</td>
+                                    <td>แก้ไข, ลบ, ส่งอนุมัติ</td>
+                                    <td>ถ้าเลือกส่งอนุมัติ สถานะจะไป <strong>Pending CS Supervisor</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge">Pending CS Supervisor</span></td>
+                                    <td>หัวหน้า CS</td>
+                                    <td>Approve, Return to Draft</td>
+                                    <td>เป็นขั้นแรกของ approval</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge">Pending Finance Verify</span></td>
+                                    <td>การเงินตรวจสอบ</td>
+                                    <td>Verify, Return to Draft</td>
+                                    <td>ทุก line ต้องมี Account Code ก่อนผ่านขั้นนี้</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge">Pending Final Approval</span></td>
+                                    <td>ผู้อนุมัติขั้นสุดท้าย</td>
+                                    <td>อนุมัติ / ไม่อนุมัติราย line, Reject ทั้งใบ</td>
+                                    <td>ต้องมีอย่างน้อย 1 line ที่ approved จึงส่งต่อบัญชีได้</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge">Pending Accounting</span></td>
+                                    <td>บัญชี</td>
+                                    <td>บันทึกโอนเงิน, Reject ทั้งใบ</td>
+                                    <td>แนบ transfer slip และบันทึก transfer ref / transfer date</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge">Transferred</span></td>
+                                    <td>ผู้เคลียร์เงิน</td>
+                                    <td>เปิด Settlement, เคลียร์เงินจริง</td>
+                                    <td>หลังโอนแล้วห้ามแก้ใบเบิก ใช้ Settlement เท่านั้น</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge">Settled</span></td>
+                                    <td>ผู้ดูข้อมูล</td>
+                                    <td>ดูสรุป, ดาวน์โหลดเอกสาร</td>
+                                    <td>ปิด flow เรียบร้อยแล้ว</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge">Rejected</span></td>
+                                    <td>ผู้ขอเบิก</td>
+                                    <td>แก้ไข, ส่งใหม่, ลบ</td>
+                                    <td>ถือว่าเป็นรายการที่ไม่ผ่าน approval</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge">Cancelled</span></td>
+                                    <td>ผู้มีสิทธิ์แก้ไข</td>
+                                    <td>แก้ไข, ลบ, ส่งใหม่</td>
+                                    <td>สถานะนี้มีอยู่ในตรรกะระบบ แม้ไม่ใช่ flow หลักที่ใช้งานทุกวัน</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>กติกา approval ของ Cash Advance</h3>
+                    <div class="rule-grid">
+                        <div class="rule">
+                            <h4>CS Supervisor</h4>
+                            <p>ตรวจความถูกต้องเบื้องต้นและส่งต่อให้การเงินตรวจสอบ</p>
+                        </div>
+                        <div class="rule">
+                            <h4>Finance Verify</h4>
+                            <p>ต้องมี Account Code ครบทุก line และต้อง route ผู้อนุมัติขั้นสุดท้ายได้ก่อนส่งต่อ</p>
+                        </div>
+                        <div class="rule">
+                            <h4>Final Approval แบบราย line</h4>
+                            <p>อนุมัติหรือ reject แต่ละ line ได้ ถ้า reject line ใดต้องใส่เหตุผลใน line นั้น</p>
+                        </div>
+                        <div class="rule">
+                            <h4>Approved Total</h4>
+                            <p>ยอดที่ส่งต่อให้ Accounting คือผลรวมของ line ที่ได้รับอนุมัติจริง ไม่ใช่ยอดเดิมทั้งใบเสมอไป</p>
+                        </div>
+                    </div>
+
+                    <h3>เกณฑ์ routing ผู้อนุมัติขั้นสุดท้าย</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ยอดรวมคำขอ</th>
+                                    <th>ระดับผู้อนุมัติ</th>
+                                    <th>หลักการเลือก</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ไม่เกิน 10,000</td>
+                                    <td>Manager</td>
+                                    <td>ระบบเลือกจาก bucket ผู้มีสิทธิ์ final manager</td>
+                                </tr>
+                                <tr>
+                                    <td>มากกว่า 10,000 ถึง 50,000</td>
+                                    <td>Director</td>
+                                    <td>ระบบเลือกจาก bucket ผู้มีสิทธิ์ final director</td>
+                                </tr>
+                                <tr>
+                                    <td>มากกว่า 50,000</td>
+                                    <td>Managing Director</td>
+                                    <td>ระบบเลือกจาก bucket ผู้มีสิทธิ์ final MD</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>ข้อมูลที่ต้องครบก่อน Final Approval</h3>
+                    <ul class="rule-list">
+                        <li>Borrower Type ต้องเป็น <strong>driver</strong> หรือ <strong>freelance</strong></li>
+                        <li>ต้องเลือกผู้รับเงินจริงให้ตรงตามประเภท</li>
+                        <li>Borrower Name Snapshot ต้องมี</li>
+                        <li>Borrower Affiliation ต้องมี</li>
+                        <li>Borrower Role ต้องมี</li>
+                        <li>Advance Date ต้องมี</li>
+                    </ul>
+
+                    <h3>การแก้ไขหลังส่งอนุมัติ</h3>
+                    <div class="callout warning">
+                        <strong>หลักปัจจุบันของระบบ:</strong>
+                        ก่อนโอนเงิน ถ้ามีการแก้ข้อมูลสำคัญในช่วง <span class="badge">Pending Final Approval</span> หรือ
+                        <span class="badge">Pending Accounting</span> ระบบจะ restart approval กลับไปเริ่มที่ <strong>CS Supervisor</strong> ใหม่
+                    </div>
+
+                    <div class="callout danger">
+                        <strong>หลังโอนเงินแล้ว:</strong> ห้ามแก้ใบเบิกโดยตรง ต้องไปปรับยอดและปิดส่วนต่างผ่าน
+                        <strong>Settlement Workbench</strong> เท่านั้น
+                    </div>
+
+                    <h3>Bulk Approval</h3>
+                    <ul class="rule-list">
+                        <li>มีในหน้ารายการ Cash Advance</li>
+                        <li>รองรับ 3 ขั้น: CS Approval, Finance Verify, Final Approval</li>
+                        <li>ใช้ note เดียวกันกับรายการที่เลือกทั้งหมดได้</li>
+                        <li>Checkbox จะเปิดให้เลือกเฉพาะรายการที่อยู่ในสถานะที่ action นั้นทำได้</li>
+                        <li><strong>Bulk Final Approval</strong> จะอนุมัติทุก line ของแต่ละใบอัตโนมัติ ไม่ใช่หน้าสำหรับ reject บาง line</li>
+                    </ul>
+                </section>
+
+                <section class="section" id="settlement">
+                    <h2>6. Settlement Workbench</h2>
+                    <p class="lead">
+                        Settlement ใช้หลังจากบัญชีโอนเงินจริงแล้วเท่านั้น เพื่อเคลียร์ว่าเงินที่เบิกไป “ใช้จริงเท่าไร, คืนเท่าไร, ต้องจ่ายเพิ่มเท่าไร”
+                    </p>
+
+                    <h3>เมื่อไรเข้า Settlement ได้</h3>
+                    <ul class="plain-list">
+                        <li>รายการต้องอยู่สถานะ <strong>Transferred</strong> หรือ <strong>Settled</strong> จึงเปิดดูได้</li>
+                        <li>ถ้าจะ “แก้ไข / บันทึก / ปิด settlement” รายการต้องอยู่สถานะ <strong>Transferred</strong></li>
+                        <li>ผู้ใช้ต้องมีสิทธิ์ <code>cash_advance settle</code> หรือ <code>cash_advance approve</code></li>
+                    </ul>
+
+                    <h3>รูปแบบ Settlement ปัจจุบัน</h3>
+                    <div class="grid-3">
+                        <div class="card">
+                            <h4>Line-level</h4>
+                            <p>ระบบปัจจุบันเคลียร์แบบราย request line ได้แล้ว แต่ละ line มี actual, allocated, variance, resolution, remaining ของตัวเอง</p>
+                        </div>
+                        <div class="card">
+                            <h4>1 line แตกเป็นหลาย actual expense ได้</h4>
+                            <p>1 request line สามารถ allocate ไปหลายค่าใช้จ่ายจริงได้ ตราบใดที่อยู่ใน Job เดียวกันและผ่านกฎ matching</p>
+                        </div>
+                        <div class="card">
+                            <h4>เอกสารแนบระดับบรรทัด</h4>
+                            <p>แต่ละ request line มีเอกสารแนบของตัวเองได้ สูงสุด 5 ไฟล์ต่อ line และระบบยังแสดง legacy document เก่าแยกไว้</p>
+                        </div>
+                    </div>
+
+                    <h3>Flow ของ Settlement</h3>
+                    <div class="flow">
+                        <div class="flow-row">
+                            <div class="flow-step">
+                                <span class="step-title">1. เปิด Workbench</span>
+                                <span class="step-note">ระบบดึงทุก request line ที่ approved และยอด advance ของแต่ละ line</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">2. Allocate ค่าใช้จ่ายจริง</span>
+                                <span class="step-note">เลือก actual expense ให้ตรง line นั้นและใส่ allocation amount</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">3. Resolve ส่วนต่าง</span>
+                                <span class="step-note">บันทึก Top-up, Return หรือ Manual Adjustment ที่ระดับ line</span>
+                            </div>
+                        </div>
+                        <div class="flow-row">
+                            <div class="flow-step">
+                                <span class="step-title">4. แนบเอกสาร</span>
+                                <span class="step-note">แนบ receipt / support document ใน line ที่เกี่ยวข้อง</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">5. Save Draft</span>
+                                <span class="step-note">เก็บงานไว้ก่อน หากยังมีส่วนต่างค้างอยู่</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">6. Close Settlement</span>
+                                <span class="step-note">ปิดได้เมื่อ remaining variance รวมเป็น 0 และเอกสารครบ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>กติกา allocation ของ Settlement</h3>
+                    <ul class="rule-list">
+                        <li>allocate ได้เฉพาะ actual expense ที่อยู่ใน Job เดียวกัน</li>
+                        <li>1 actual expense ถูก allocate ได้กับ request line เดียวเท่านั้นใน settlement เดียวกัน</li>
+                        <li>ระบบยอมให้ line ดึง expense ที่ “ตรง cost type เดียวกัน” หรือ “อยู่ใน planned linked expense list”</li>
+                        <li>allocation amount ห้ามเกิน effective actual ของ expense นั้น</li>
+                    </ul>
+
+                    <h3>ความหมายของค่าที่ใช้ใน Settlement</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ช่อง / ตัวเลข</th>
+                                    <th>ความหมาย</th>
+                                    <th>ใช้เมื่อไร</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Actual Total</td>
+                                    <td>ยอดใช้จริงรวมจาก actual expense ที่ allocate ไว้</td>
+                                    <td>ใช้ดูว่าค่าใช้จริงสูงหรือต่ำกว่าเงินที่เบิกไป</td>
+                                </tr>
+                                <tr>
+                                    <td>Allocated Total</td>
+                                    <td>ยอด allocation ที่เลือกเข้ามาใน settlement</td>
+                                    <td>ใช้ตรวจว่ากระจายยอดครบหรือยัง</td>
+                                </tr>
+                                <tr>
+                                    <td>Variance</td>
+                                    <td>Actual - Advance</td>
+                                    <td>บอกส่วนต่างก่อนแก้ด้วย return / top-up / adjustment</td>
+                                </tr>
+                                <tr>
+                                    <td>Top-up Amount</td>
+                                    <td>จำนวนเงินที่ต้องจ่ายเพิ่มให้ line นั้น</td>
+                                    <td>เมื่อ actual สูงกว่า advance</td>
+                                </tr>
+                                <tr>
+                                    <td>Return Amount</td>
+                                    <td>จำนวนเงินที่ต้องโอนคืน</td>
+                                    <td>เมื่อ advance สูงกว่า actual</td>
+                                </tr>
+                                <tr>
+                                    <td>Manual Settlement Adjustment</td>
+                                    <td>การปรับ signed amount ด้วยมือ</td>
+                                    <td>ใช้เฉพาะกรณีที่มีเหตุผลชัดเจนและต้องการปิดส่วนต่างแบบ manual</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>Settlement Reason</h3>
+                    <p>ตอนกด Close Settlement ระบบบังคับให้เลือกเหตุผลการปิดรายการ โดยตัวเลือกหลักคือ:</p>
+                    <ul class="plain-list">
+                        <li><strong>Normal settlement</strong> ปิดรายการตามปกติ</li>
+                        <li><strong>Job cancelled</strong> งานถูกยกเลิก</li>
+                        <li><strong>Unused advance returned</strong> มีเงินเหลือและโอนคืน</li>
+                        <li><strong>Other</strong> กรณีอื่น และต้องกรอก Reason Detail เพิ่ม</li>
+                    </ul>
+
+                    <h3>กติกาเอกสารแนบ</h3>
+                    <ul class="rule-list">
+                        <li>Settlement ต้องมีเอกสารแนบอย่างน้อย 1 ไฟล์ก่อน Save หรือ Close</li>
+                        <li>ใน mode line-level ระบบรองรับเอกสารแนบราย request line</li>
+                        <li>สูงสุด 5 ไฟล์ต่อ request line</li>
+                        <li>เอกสารเก่าที่ไม่ผูก line จะถูกแสดงในส่วน <strong>Legacy / Unassigned Settlement Documents</strong></li>
+                        <li>ไฟล์ที่รองรับคือ PDF, JPG, JPEG, PNG, WEBP และแต่ละไฟล์ต้องไม่เกิน 10 MB</li>
+                    </ul>
+
+                    <div class="callout info">
+                        <strong>ความหมายทางธุรกิจ:</strong> การ “โอนคืน” ในระบบปัจจุบันไม่ได้แสดงแค่ตัวเลข แต่เป็น record จริงใน settlement
+                        จึงสามารถดูย้อนหลังได้จากสรุป settlement และจากเอกสารแนบที่ line นั้นเกี่ยวข้อง
+                    </div>
+                </section>
+
+                <section class="section" id="expense-adjustment">
+                    <h2>7. Expense Adjustment</h2>
+                    <p class="lead">
+                        Expense Adjustment คือช่องทางแก้ actual expense หลังรายการฐานถูก lock แล้ว และใช้กับรายการที่มี cash advance โอนแล้วเป็นหลัก
+                    </p>
+
+                    <h3>เมื่อไรควรใช้ Expense Adjustment</h3>
+                    <ul class="plain-list">
+                        <li>ค่าใช้จ่ายจริงใน Job ถูกบันทึกไปแล้ว แต่ต้องแก้จำนวนเงิน / รายละเอียดหลังจากนั้น</li>
+                        <li>Job มี cash advance ที่โอนแล้ว ทำให้แก้ actual expense ฐานตรง ๆ ไม่ได้</li>
+                        <li>มีรายการ adjustment เก่าอยู่ใน flow เดียวกัน จึงต้องใช้ revision ผ่าน adjustment ไม่ใช้ overwrite</li>
+                    </ul>
+
+                    <h3>เงื่อนไขก่อนสร้าง Adjustment</h3>
+                    <ul class="rule-list">
+                        <li>ผู้ใช้ต้องมีสิทธิ์ดูแล Job และมีสิทธิ์ <code>expense_adjustment create</code> หรือ <code>submit</code></li>
+                        <li>Job นั้นต้องมี Cash Advance ที่ผ่านขั้นโอนแล้วอย่างน้อย 1 ใบ</li>
+                        <li>Adjustment ถูกผูกกับ actual expense และ cash advance ที่เกี่ยวข้อง</li>
+                    </ul>
+
+                    <h3>Flow ของ Expense Adjustment</h3>
+                    <div class="flow">
+                        <div class="flow-row">
+                            <div class="flow-step">
+                                <span class="step-title">Draft</span>
+                                <span class="step-note">ผู้ใช้ร่างรายการและแก้ไขได้</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">Pending CS Supervisor</span>
+                                <span class="step-note">รอหัวหน้า CS อนุมัติ</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">Pending Finance Manager</span>
+                                <span class="step-note">รอผู้จัดการการเงินอนุมัติ</span>
+                            </div>
+                            <div class="flow-arrow">→</div>
+                            <div class="flow-step">
+                                <span class="step-title">Approved</span>
+                                <span class="step-note">effective actual ของ expense ถูกอัปเดตจาก adjustment ที่อนุมัติล่าสุด</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>ตารางสถานะของ Expense Adjustment</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>สถานะ</th>
+                                    <th>ใครทำงานต่อ</th>
+                                    <th>Action</th>
+                                    <th>หมายเหตุ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge">Draft</span></td>
+                                    <td>ผู้ขอ</td>
+                                    <td>แก้ไข, ลบ, ส่งอนุมัติ</td>
+                                    <td>ส่งแล้วไป CS Supervisor</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge">Pending CS Supervisor</span></td>
+                                    <td>หัวหน้า CS</td>
+                                    <td>Approve, Return to Draft, Reject</td>
+                                    <td>ผู้ขอเองอนุมัติรายการตัวเองไม่ได้</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge">Pending Finance Manager</span></td>
+                                    <td>ผู้จัดการการเงิน</td>
+                                    <td>Approve, Return to Draft, Reject</td>
+                                    <td>ถ้ามี assigned user ระบุไว้ ต้องเป็น user คนนั้นหรือ admin</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge">Approved</span></td>
+                                    <td>ผู้ดูข้อมูล / ผู้เคลียร์</td>
+                                    <td>นำยอด effective actual ไปใช้ใน Settlement</td>
+                                    <td>ฐาน actual เดิมยังไม่ถูก overwrite ตรง ๆ แต่ระบบดึงค่า effective ล่าสุดมาใช้</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge">Rejected</span></td>
+                                    <td>ผู้ขอ</td>
+                                    <td>แก้ไข, ส่งใหม่, ลบ</td>
+                                    <td>แก้ได้เฉพาะ draft หรือ rejected เท่านั้น</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="callout warning">
+                        <strong>ความต่างจาก Cash Advance:</strong> Expense Adjustment ใช้หลัก “สิทธิ์ + ผู้ที่ถูก assign”
+                        ถ้าระบุ approver ไว้ ระบบจะยอมให้เฉพาะ user คนนั้นกดอนุมัติ ยกเว้น admin
+                    </div>
+                </section>
+
+                <section class="section" id="expense-control">
+                    <h2>8. Expense Control และ Bulk Approval</h2>
+                    <p class="lead">
+                        Expense Control คือ workspace สำหรับคนคุมงานด้านค่าใช้จ่าย ใช้ดู queue งานที่ยังไม่ปิด และช่วยลดการเข้าออกหลายหน้า
+                    </p>
+
+                    <h3>สิ่งที่เห็นใน Expense Control</h3>
+                    <ul class="plain-list">
+                        <li>ยอดและจำนวน Cash Advance ของวันนี้</li>
+                        <li>ยอดและจำนวน Cash Advance ของสัปดาห์นี้</li>
+                        <li>ยอดรายการรอโอน</li>
+                        <li>ยอดรายการโอนแล้ว / รอเคลียร์</li>
+                        <li>รายการ Expense Adjustment ที่ยังเปิดอยู่</li>
+                        <li>Settlement modal แบบเร็วจากรายการบางส่วนของวันนี้</li>
+                    </ul>
+
+                    <h3>กติกาของ open queue</h3>
+                    <p>ในมุม Expense Control ระบบจะไม่นับสถานะต่อไปนี้เป็นคิวเปิด:</p>
+                    <ul class="plain-list">
+                        <li><code>draft</code></li>
+                        <li><code>settled</code></li>
+                        <li><code>rejected</code></li>
+                        <li><code>cancelled</code></li>
+                    </ul>
+
+                    <h3>Bulk Approval ใช้เมื่อไร</h3>
+                    <div class="grid-3">
+                        <div class="card">
+                            <h4>Bulk CS Approval</h4>
+                            <p>เหมาะกับวันไหนที่มีใบเบิกจำนวนมากและผู้ตรวจดูรายละเอียดไว้ก่อนแล้ว</p>
+                        </div>
+                        <div class="card">
+                            <h4>Bulk Finance Verify</h4>
+                            <p>ใช้กับรายการที่ account code และ routing ถูกต้องครบแล้ว</p>
+                        </div>
+                        <div class="card">
+                            <h4>Bulk Final Approval</h4>
+                            <p>ใช้เฉพาะกรณีที่ต้องการอนุมัติทุก line ของทุกใบที่เลือกพร้อมกัน</p>
+                        </div>
+                    </div>
+
+                    <div class="callout">
+                        <strong>แนวปฏิบัติที่แนะนำ:</strong> ถ้ารายการใดมีความเสี่ยงต้อง reject บาง line หรือมีรายละเอียดพิเศษ
+                        ให้เปิดหน้า detail แล้วอนุมัติรายใบ แทนการใช้ Bulk Final Approval
+                    </div>
+                </section>
+
+                <section class="section" id="rules">
+                    <h2>9. Business Rules สำคัญ</h2>
+                    <div class="rule-grid">
+                        <div class="rule">
+                            <h4>1 ใบเบิก = 1 Job</h4>
+                            <p>ปัจจุบันยังไม่รองรับ 1 ใบเบิกที่ผูกหลาย Job ระบบใหม่ที่ทำแล้วคือ 1 ใบเบิกมีหลาย line ได้ แต่ยังอยู่ใน Job เดียว</p>
+                        </div>
+                        <div class="rule">
+                            <h4>1 line = 1 ประเภทค่าใช้จ่าย</h4>
+                            <p>ไม่ได้หมายถึง 1 ใบเสร็จ ดังนั้นตอน Settlement จึงสามารถแตก 1 line ไปหลาย actual expense / หลายใบเสร็จได้</p>
+                        </div>
+                        <div class="rule">
+                            <h4>อนุมัติขั้นสุดท้ายแบบบาง line ได้</h4>
+                            <p>แต่ต้องมีอย่างน้อย 1 line ที่ผ่านจริง และ line ที่ไม่ผ่านต้องมีเหตุผลกำกับ</p>
+                        </div>
+                        <div class="rule">
+                            <h4>หลังโอน ห้ามแก้ใบเบิก</h4>
+                            <p>หลังสถานะเป็น Transferred ต้องแก้ความจริงผ่าน Settlement หรือ Expense Adjustment เท่านั้น</p>
+                        </div>
+                        <div class="rule">
+                            <h4>ก่อนโอน ถ้าแก้ข้อมูลสำคัญ ระบบ re-approve ใหม่</h4>
+                            <p>ใช้กับช่วง Pending Final Approval และ Pending Accounting ถ้ามีการเปลี่ยนข้อมูลที่มีผลต่อยอดหรือบริบทคำขอ</p>
+                        </div>
+                        <div class="rule">
+                            <h4>Account Code สำคัญก่อนการเงินตรวจสอบ</h4>
+                            <p>ทุก request line ต้องมี Account Code ก่อนผ่านขั้น Finance Verify</p>
+                        </div>
+                        <div class="rule">
+                            <h4>Actual Expense บางครั้งแก้ตรง ๆ ไม่ได้</h4>
+                            <p>ถ้ามี cash advance หลังโอน หรือมี adjustment ค้าง/อนุมัติแล้ว รายการฐานจะ lock และต้องแก้ผ่าน revision flow แทน</p>
+                        </div>
+                        <div class="rule">
+                            <h4>Settlement ปิดได้เมื่อส่วนต่างเป็นศูนย์</h4>
+                            <p>ไม่ว่าจะแก้ด้วย allocation, top-up, return หรือ manual adjustment สุดท้าย remaining variance ต้องเป็น 0</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section" id="faq">
+                    <h2>10. คำถามที่พบบ่อย</h2>
+                    <div class="faq">
+                        <div class="faq-item">
+                            <h4>ถาม: เบิกล่วงหน้าทีเดียว แต่ตอนเคลียร์อยากแตกตามใบเสร็จหลายใบได้ไหม</h4>
+                            <p>ได้ในรูปแบบปัจจุบัน ถ้าใช้ 1 ใบเบิกแบบหลาย request line และไปแตก actual expense หลายรายการตอน Settlement โดยแต่ละ line สามารถ allocate ไปหลายค่าใช้จ่ายจริงได้</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4>ถาม: ยอดโอนคืนจะไปอยู่ตรงไหน</h4>
+                            <p>อยู่ใน Settlement ที่ระดับ line ผ่านช่อง <strong>Return Amount</strong> และสรุปยอดรวมที่หน้า Settlement Summary ของใบเบิก</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4>ถาม: ลูกค้ายกเลิกกะทันหันหลังโอนแล้วต้องทำอย่างไร</h4>
+                            <p>ไปที่ Settlement บันทึกค่าใช้จริงที่เกิดขึ้นแล้ว ถ้ามีเงินเหลือให้ใส่ Return Amount และเลือก Settlement Reason เป็น <strong>Job cancelled</strong></p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4>ถาม: หลังส่งอนุมัติแล้วยังแก้ได้ไหม</h4>
+                            <p>ก่อนโอนยังแก้ได้บางสถานะ แต่ถ้าแก้ข้อมูลสำคัญในช่วง Pending Final Approval หรือ Pending Accounting ระบบจะเริ่ม approval ใหม่ ส่วนหลังโอนแล้วแก้ใบเบิกไม่ได้ ต้องใช้ Settlement</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4>ถาม: ทำไมเห็นรายการแต่กดอนุมัติไม่ได้</h4>
+                            <p>สาเหตุหลักมี 3 แบบ คือ 1) สถานะยังไม่ถึงขั้นนั้น 2) ไม่มี permission ของ stage นั้น 3) สำหรับ Expense Adjustment รายการถูก assign ให้คนอื่น</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4>ถาม: ทำไมปิด Settlement ไม่ได้</h4>
+                            <p>ส่วนใหญ่เกิดจาก remaining variance ยังไม่เป็นศูนย์, ยังไม่ได้เลือก Settlement Reason ตอน close หรือยังไม่มีเอกสารแนบอย่างน้อย 1 ไฟล์</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h4>ถาม: ทำไมแก้ Actual Expense เดิมไม่ได้</h4>
+                            <p>เพราะระบบ lock รายการฐานหลังมี cash advance โอนแล้ว หรือเมื่อมี expense adjustment เปิด/อนุมัติอยู่ ต้องใช้ Expense Adjustment แทน</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section" id="appendix">
+                    <h2>11. ภาคผนวก</h2>
+
+                    <h3>11.1 Permission Key ที่เกี่ยวข้อง</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>โมดูล</th>
+                                    <th>Permission Key</th>
+                                    <th>ความหมายเชิงธุรกิจ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Cash Advance</td>
+                                    <td><code>view</code></td>
+                                    <td>ดูรายการ / ดูรายละเอียด / ดู settlement</td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Advance</td>
+                                    <td><code>create</code>, <code>submit</code></td>
+                                    <td>สร้างและส่งใบเบิก</td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Advance</td>
+                                    <td><code>edit</code>, <code>delete</code></td>
+                                    <td>แก้ไขและลบรายการตามสถานะที่อนุญาต</td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Advance</td>
+                                    <td><code>cs_approve</code></td>
+                                    <td>อนุมัติขั้นหัวหน้า CS</td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Advance</td>
+                                    <td><code>finance_verify</code></td>
+                                    <td>ตรวจสอบโดยการเงิน</td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Advance</td>
+                                    <td><code>final_approve</code></td>
+                                    <td>อนุมัติขั้นสุดท้าย</td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Advance</td>
+                                    <td><code>accounting_approve</code></td>
+                                    <td>บันทึกการโอนโดยบัญชี</td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Advance</td>
+                                    <td><code>settle</code></td>
+                                    <td>ทำ Settlement</td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Advance</td>
+                                    <td><code>approve</code></td>
+                                    <td>สิทธิ์อนุมัติรวม ครอบคลุมทุก stage ข้างต้นรวม Settlement</td>
+                                </tr>
+                                <tr>
+                                    <td>Expense Adjustment</td>
+                                    <td><code>view</code></td>
+                                    <td>ดูรายการ adjustment</td>
+                                </tr>
+                                <tr>
+                                    <td>Expense Adjustment</td>
+                                    <td><code>create</code>, <code>submit</code></td>
+                                    <td>สร้างและส่ง adjustment</td>
+                                </tr>
+                                <tr>
+                                    <td>Expense Adjustment</td>
+                                    <td><code>edit</code>, <code>delete</code></td>
+                                    <td>แก้ไข / ลบ draft หรือ rejected</td>
+                                </tr>
+                                <tr>
+                                    <td>Expense Adjustment</td>
+                                    <td><code>cs_approve</code></td>
+                                    <td>อนุมัติขั้นหัวหน้า CS</td>
+                                </tr>
+                                <tr>
+                                    <td>Expense Adjustment</td>
+                                    <td><code>final_approve</code></td>
+                                    <td>อนุมัติขั้นผู้จัดการการเงิน</td>
+                                </tr>
+                                <tr>
+                                    <td>Expense Adjustment</td>
+                                    <td><code>approve</code></td>
+                                    <td>สิทธิ์อนุมัติรวมของ adjustment</td>
+                                </tr>
+                                <tr>
+                                    <td>Job</td>
+                                    <td><code>view</code>, <code>create</code>, <code>edit</code>, <code>delete</code></td>
+                                    <td>ดูแล Job และ Actual Expense ในฐานะต้นทางของ flow</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>11.2 Route หลักที่เกี่ยวข้อง</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>หน้าจอ / action</th>
+                                    <th>Route</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Job View</td>
+                                    <td><code>/transport/jobs/view/{jobId}</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Expense Adjustment List</td>
+                                    <td><code>/transport/expense-adjustments</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Expense Control</td>
+                                    <td><code>/transport/expense-control</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Advance List</td>
+                                    <td><code>/transport/cash-advances</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Advance by Job</td>
+                                    <td><code>/transport/cash-advances/job/{jobId}</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Create Cash Advance</td>
+                                    <td><code>/transport/cash-advances/create/{jobId}</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Cash Advance Detail</td>
+                                    <td><code>/transport/cash-advances/view/{id}</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Settlement Workbench</td>
+                                    <td><code>/transport/cash-advances/settlement/{id}</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Download Settlement Document</td>
+                                    <td><code>/transport/cash-advances/settlement-documents/download/{id}</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="callout info">
+                        <strong>ข้อแนะนำสำหรับการใช้งานเอกสารนี้:</strong>
+                        ถ้าจะใช้คู่มือนี้สำหรับ train ผู้ใช้ใหม่ แนะนำให้สอนตามลำดับ <strong>Job Expense → Cash Advance → Approval → Transfer → Settlement → Expense Adjustment</strong>
+                        เพราะเป็นลำดับที่ใกล้เคียงการทำงานจริงที่สุด
+                    </div>
+
+                    <p class="footer-note">
+                        เอกสารนี้จัดทำจากตรรกะใน controller / view / route ของระบบปัจจุบัน โดยเน้นให้คนใช้งานทั่วไปเข้าใจ flow จริงของระบบ
+                        หากในอนาคตมีการเปลี่ยน business rule หรือ permission mapping ควรอัปเดตคู่มือนี้ตามโค้ดรอบล่าสุดอีกครั้ง
+                    </p>
+                </section>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
